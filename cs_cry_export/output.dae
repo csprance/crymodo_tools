@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset>
+    <contributor>
+      <author>Chris Sprance</author>
+      <authoring_tool>Modo CRYEXPORT Tool 1.0.0</authoring_tool>
+      <source_data>filepath</source_data>
+    </contributor>
+    <created>2019-10-07 20:31:50.729000</created>
+    <modified>2019-10-07 20:31:50.729000</modified>
+    <revision>1.4.1</revision>
+    <unit name="meter" meter="1.0000000000e+000"/>
+    <up_axis>Z_UP</up_axis>
+  </asset>
+  <library_animation_clips/>
+  <library_animations/>
+  <library_effects>
+    <effect id="test5">
+      <profile_COMMON>
+        <technique sid="default">
+          <phong>
+            <emission>
+              <color sid="emission">0.0 0.0 0.0 1.0</color>
+            </emission>
+            <ambient>
+              <color sid="ambient">0.0 0.0 0.0 1.0</color>
+            </ambient>
+            <diffuse>
+              <color sid="diffuse">0.0 0.0 0.0 1.0</color>
+            </diffuse>
+            <specular>
+              <color sid="specular">0.0 0.0 0.0 1.0</color>
+            </specular>
+            <shininess>
+              <float sid="shininess">1.0</float>
+            </shininess>
+            <reflective>
+              <color sid="reflective">0.0 0.0 0.0 1.0</color>
+            </reflective>
+            <reflectivity>
+              <float sid="reflectivity">1.0</float>
+            </reflectivity>
+            <transparent opaque="RGB_ZERO">
+              <color sid="transparent">0.0 0.0 0.0 1.0</color>
+            </transparent>
+            <transparency>
+              <float sid="transparency">1.0</float>
+            </transparency>
+            <index_of_refraction>
+              <float sid="index_of_refraction">1.0</float>
+            </index_of_refraction>
+          </phong>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="test1">
+      <profile_COMMON>
+        <technique sid="default">
+          <phong>
+            <emission>
+              <color sid="emission">0.0 0.0 0.0 1.0</color>
+            </emission>
+            <ambient>
+              <color sid="ambient">0.0 0.0 0.0 1.0</color>
+            </ambient>
+            <diffuse>
+              <color sid="diffuse">0.0 0.0 0.0 1.0</color>
+            </diffuse>
+            <specular>
+              <color sid="specular">0.0 0.0 0.0 1.0</color>
+            </specular>
+            <shininess>
+              <float sid="shininess">1.0</float>
+            </shininess>
+            <reflective>
+              <color sid="reflective">0.0 0.0 0.0 1.0</color>
+            </reflective>
+            <reflectivity>
+              <float sid="reflectivity">1.0</float>
+            </reflectivity>
+            <transparent opaque="RGB_ZERO">
+              <color sid="transparent">0.0 0.0 0.0 1.0</color>
+            </transparent>
+            <transparency>
+              <float sid="transparency">1.0</float>
+            </transparency>
+            <index_of_refraction>
+              <float sid="index_of_refraction">1.0</float>
+            </index_of_refraction>
+          </phong>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="test2">
+      <profile_COMMON>
+        <technique sid="default">
+          <phong>
+            <emission>
+              <color sid="emission">0.0 0.0 0.0 1.0</color>
+            </emission>
+            <ambient>
+              <color sid="ambient">0.0 0.0 0.0 1.0</color>
+            </ambient>
+            <diffuse>
+              <color sid="diffuse">0.0 0.0 0.0 1.0</color>
+            </diffuse>
+            <specular>
+              <color sid="specular">0.0 0.0 0.0 1.0</color>
+            </specular>
+            <shininess>
+              <float sid="shininess">1.0</float>
+            </shininess>
+            <reflective>
+              <color sid="reflective">0.0 0.0 0.0 1.0</color>
+            </reflective>
+            <reflectivity>
+              <float sid="reflectivity">1.0</float>
+            </reflectivity>
+            <transparent opaque="RGB_ZERO">
+              <color sid="transparent">0.0 0.0 0.0 1.0</color>
+            </transparent>
+            <transparency>
+              <float sid="transparency">1.0</float>
+            </transparency>
+            <index_of_refraction>
+              <float sid="index_of_refraction">1.0</float>
+            </index_of_refraction>
+          </phong>
+        </technique>
+      </profile_COMMON>
+    </effect>
+  </library_effects>
+  <library_materials>
+    <material id="mat-id">
+      <instance_effect url="#mat-id"/>
+    </material>
+    <material id="mat-id1">
+      <instance_effect url="#mat-id1"/>
+    </material>
+  </library_materials>
+  <library_geometries/>
+  <library_controllers/>
+  <library_visual_scenes>
+    <node id="default">
+      <translate sid="translation">0 0 0</translate>
+      <rotate sid="rotation_z">0 0 1 0</rotate>
+      <rotate sid="rotation_y">0 1 0 0</rotate>
+      <rotate sid="rotation_x">1 0 0 0</rotate>
+      <scale sid="scale">1 1 1</scale>
+      <extra>
+        <technique profile="CryEngine">
+          <helper type="dummy">
+            <bound_box_min>-5 -5 -5</bound_box_min>
+            <bound_box_max>5 5 5</bound_box_max>
+          </helper>
+        </technique>
+      </extra>
+    </node>
+  </library_visual_scenes>
+  <library_images/>
+  <scene/>
+</COLLADA>

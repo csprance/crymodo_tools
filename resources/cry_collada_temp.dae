@@ -2,12 +2,12 @@
 <COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
   <asset>
     <contributor>
-      <author>Chris Sprance</author>
-      <authoring_tool>Modo CRYEXPORT Tool 1.0.0</authoring_tool>
+      <author>chris</author>
+      <authoring_tool>CRYENGINE modo COLLADA Exporter 1.0.0</authoring_tool>
       <source_data>file://C:/Users/chris/Documents/Luxology/Content/Kits/cs_cry_export/resources/test_export_scene.lxo</source_data>
     </contributor>
-    <created>2019-10-10 01:20:49.191000</created>
-    <modified>2019-10-10 01:20:49.191000</modified>
+    <created>2019-10-10 15:34:17.978000</created>
+    <modified>2019-10-10 15:34:17.978000</modified>
     <revision>1.4.1</revision>
     <unit name="meter" meter="1.0000000000e+000"/>
     <up_axis>Z_UP</up_axis>

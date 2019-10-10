@@ -1,4 +1,25 @@
+import os
+import sys
+
 import lx
+import modo
+
+
+def get_scene_root_folder():
+    scene_root = lx.eval1("query sceneservice scene.file ? current")
+    if scene_root is not None:
+        return os.path.dirname(scene_root)
+    sys.exit()
+
+
+def get_cryexportnodes():
+    """ Gets all the cryexportnodes in a scene"""
+    scene = modo.Scene()
+    nodes = []
+    for item in scene.selected:
+        if item.name.startswith("cryexportnode_"):
+            nodes.append(item)
+    return nodes
 
 
 def create_channel(name, item):

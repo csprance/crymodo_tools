@@ -4,10 +4,10 @@
     <contributor>
       <author>Chris Sprance</author>
       <authoring_tool>Modo CRYEXPORT Tool 1.0.0</authoring_tool>
-      <source_data>filepath</source_data>
+      <source_data>file://C:/Users/chris/Documents/Luxology/Content/Kits/cs_cry_export/resources/test_export_scene.lxo</source_data>
     </contributor>
-    <created>2019-10-07 20:31:50.729000</created>
-    <modified>2019-10-07 20:31:50.729000</modified>
+    <created>2019-10-10 01:20:49.191000</created>
+    <modified>2019-10-10 01:20:49.191000</modified>
     <revision>1.4.1</revision>
     <unit name="meter" meter="1.0000000000e+000"/>
     <up_axis>Z_UP</up_axis>

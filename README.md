@@ -1,10 +1,31 @@
 # Modo CryExport
 > CRYENGINE exporter for modo 13^
 
+## Materials
+* To create a CRYENGINE material. Create a material group and group your materials into it. The name must start with `crymat_`
+* The materials order will be used to order the material exported and material ids
+
+## Meshes
+> The following structure should be used
+* `cryexportnode_example`
+    * `example_group` - UDP options go hjere
+        * `proxy_mesh`
+        * `mesh1`
+        * `mesh2`
+        * `_lod1_example_group`
+            * `lod1_mesh`
+        * `_lod2_example_group`
+            * `lod2_mesh`     
 
 ## Customer User Channels
+### output_path
+> Where the cgf file will be export to
+> This is added to the cryexportnode top most folder
+    
+    * STRING<DIRECTORY PATH>
+     
 ### proxy_type
-> What type of proxy material
+> What type of proxy material. This is added to the material
 
     * NODRAW
     * NOCOLLIDE
@@ -14,20 +35,9 @@
 
 ### udp_type
 > Defines the type of primitive proxy if it's not defined it's considered a RENDERMESH
+> This is added to the mesh_group containing the proxy.
     
     * RENDERMESH
     * BOX
     * CYLINDER
     * SPHERE
-
-### master_material
-> The name of the master material that will be assigned to the object
-
-### mat_order
-> The order in which each sub-material should be placed.
-    
----
-
-![](https://csprance.com/shots/2019-10-03_29981419-5cd2-4938-8da9-1fcdf4fb165a.png)
-
-![](https://csprance.com/shots/2019-10-03_ff922040-9fdf-4a24-b77f-4c5e7db65d5d.png)

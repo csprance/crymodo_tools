@@ -3,6 +3,62 @@ import sys
 
 import lx
 import modo
+import modo.constants as c
+
+
+def get_submats_from_cryexport_node(cryexport_node):
+    """
+    Gets the materials from a passed in cryexport_node
+    :param cryexport_node:
+    :return:
+    """
+    scene = modo.Scene()
+    material_names = set()
+    meshes = cryexport_node.children(itemType=c.MESH_TYPE, recursive=True)
+    for mesh in meshes:
+        geo = mesh.geometry
+        for x in xrange(geo.PTagCount(lx.symbol.i_PTAG_MATR)):
+            material_names.add(geo.PTagByIndex(lx.symbol.i_PTAG_MATR, x))
+    material_names = list(material_names)
+    material_names.reverse()
+    materials = []
+    for mat in scene.items(c.MASK_TYPE):
+        if mat.name.replace("(Material)", "").strip() in material_names:
+            materials.append(mat)
+    # sort backwards cuz modo
+    return sorted(materials, key=lambda y: 1 - y.parentIndex)
+
+
+def get_cry_materials(selected=False):
+    # gets all the cry materials in the scene
+    scene = modo.Scene()
+    materials = (
+        scene.selectedByType(c.MASK_TYPE) if selected else scene.items(c.MASK_TYPE)
+    )
+    ret_mats = []
+    for mat in materials:
+        if mat.name.startswith("crymat_"):
+            ret_mats.append(mat)
+
+    return ret_mats
+
+
+def mat_name(mat):
+    """Get mat name with (Material) Stripped off"""
+    return mat.name.replace("(Material)", "").strip()
+
+
+def make_phys_material_name(mat, idx, hash=False):
+    phys_type = mat.channel('proxy_type').get() if mat.channel('proxy_type') is not None else 'physNone'
+    return (
+        "#"
+        if hash
+        else "" + "%s__%s__%s__%s" % (mat.parent.name, mat_name(mat), idx, phys_type)
+    )
+
+
+def make_effect_name(mat, idx):
+    return "%s-%s-submat-effect" % (mat.parent.name, idx)
 
 
 def get_scene_root_folder():
@@ -12,13 +68,15 @@ def get_scene_root_folder():
     sys.exit()
 
 
-def get_cryexportnodes():
+def get_cryexportnodes(selected=True):
     """ Gets all the cryexportnodes in a scene"""
     scene = modo.Scene()
     nodes = []
-    for item in scene.selected:
+    items = scene.selected if selected else scene.items(c.GROUPLOCATOR_TYPE)
+    for item in items:
         if item.name.startswith("cryexportnode_"):
             nodes.append(item)
+
     return nodes
 
 
@@ -55,4 +113,5 @@ def get_user_input(title):
         lx.eval("dialog.result ?")
     # Now that the user set the values, we can just query it
     user_input = lx.eval("user.value UserValue ?")
+
     return user_input

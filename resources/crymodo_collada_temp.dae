@@ -6,8 +6,8 @@
       <authoring_tool>CRYENGINE modo COLLADA Exporter 1.0.0</authoring_tool>
       <source_data>file://C:/Users/chris/Documents/Luxology/Content/Kits/cs_cry_export/resources/test_export_scene.lxo</source_data>
     </contributor>
-    <created>2019-10-10 15:34:17.978000</created>
-    <modified>2019-10-10 15:34:17.978000</modified>
+    <created>2019-10-12 19:58:22.721000</created>
+    <modified>2019-10-12 19:58:22.721000</modified>
     <revision>1.4.1</revision>
     <unit name="meter" meter="1.0000000000e+000"/>
     <up_axis>Z_UP</up_axis>
@@ -15,7 +15,7 @@
   <library_animation_clips/>
   <library_animations/>
   <library_effects>
-    <effect id="test5">
+    <effect id="crymat_test_mat-0-submat-effect">
       <profile_COMMON>
         <technique sid="default">
           <phong>
@@ -53,7 +53,7 @@
         </technique>
       </profile_COMMON>
     </effect>
-    <effect id="test1">
+    <effect id="crymat_test_mat-1-submat-effect">
       <profile_COMMON>
         <technique sid="default">
           <phong>
@@ -91,7 +91,7 @@
         </technique>
       </profile_COMMON>
     </effect>
-    <effect id="test2">
+    <effect id="crymat_test_mat-2-submat-effect">
       <profile_COMMON>
         <technique sid="default">
           <phong>
@@ -131,31 +131,46 @@
     </effect>
   </library_effects>
   <library_materials>
-    <material id="mat-id">
-      <instance_effect url="#mat-id"/>
+    <material id="crymat_test_mat__proxy__0__NODRAW">
+      <instance_effect url="#"/>
     </material>
-    <material id="mat-id1">
-      <instance_effect url="#mat-id1"/>
+    <material id="crymat_test_mat__green__1__physNone">
+      <instance_effect url="#"/>
+    </material>
+    <material id="crymat_test_mat__purple__2__physNone">
+      <instance_effect url="#"/>
     </material>
   </library_materials>
   <library_geometries/>
   <library_controllers/>
   <library_visual_scenes>
-    <node id="default">
-      <translate sid="translation">0 0 0</translate>
-      <rotate sid="rotation_z">0 0 1 0</rotate>
-      <rotate sid="rotation_y">0 1 0 0</rotate>
-      <rotate sid="rotation_x">1 0 0 0</rotate>
-      <scale sid="scale">1 1 1</scale>
-      <extra>
-        <technique profile="CryEngine">
-          <helper type="dummy">
-            <bound_box_min>-5 -5 -5</bound_box_min>
-            <bound_box_max>5 5 5</bound_box_max>
-          </helper>
-        </technique>
-      </extra>
-    </node>
+    <visual_scene id="visual_scene_0" name="untitled">
+      <node id="cryexportnode_test">
+        <translate sid="translation">0.0 0.0 0.0</translate>
+        <rotate sid="rotation_z">0.0 0.0 1.0 0.0</rotate>
+        <rotate sid="rotation_y">0.0 1.0 0.0 0.0</rotate>
+        <rotate sid="rotation_x">1.0 0.0 0.0 0.0</rotate>
+        <scale sid="scale">1.0 1.0 1.0</scale>
+        <extra>
+          <technique profile="CryEngine">
+            <properties>DoNotMerge
+UseCustomNormals
+fileType=cgf
+customExportPath=..\</properties>
+          </technique>
+          <technique profile="XSI">
+            <XSI_CustomPSet name="ExportProperties">
+              <propagation>NODE</propagation>
+              <type>CryExportNodeProperties</type>
+              <XSI_Parameter type="Integer" id="Filetype" value="1"/>
+              <XSI_Parameter type="Text" id="Filename" value="polyCube1"/>
+              <XSI_Parameter type="Boolean" id="Exportable" value="1"/>
+              <XSI_Parameter type="Boolean" id="MergeObjects" value="0"/>
+            </XSI_CustomPSet>
+          </technique>
+        </extra>
+      </node>
+    </visual_scene>
   </library_visual_scenes>
   <library_images/>
   <scene/>

@@ -1,4 +1,7 @@
+from subprocess import Popen, PIPE, STDOUT
+
 import lx
+import modo
 
 
 def set_rc_path():
@@ -15,4 +18,18 @@ def set_rc_path():
 
 def run(**kwargs):
     rc_path = lx.eval("user.value cs_cry_export_preference_rc ?")
-    lx.out(rc_path)
+    output = Popen(
+        [
+            rc_path,
+            "/verbose",
+            "/refresh",
+            '/threads=processors'
+            "/vertexindexformat=u16",
+            kwargs["path"],
+        ],
+        shell=True,
+        stdin=PIPE,
+        stdout=PIPE,
+        stderr=STDOUT,
+    ).communicate()[0]
+    # modo.dialogs.alert("RC Output", output)

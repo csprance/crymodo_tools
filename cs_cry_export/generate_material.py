@@ -1,11 +1,12 @@
 import os
+import subprocess
 
-from lxml import etree
-from lxml.builder import ElementMaker
 import modo
 import modo.constants as c
 
 from cs_cry_export.utils import get_scene_root_folder
+from lxml import etree
+from lxml.builder import ElementMaker
 
 E = ElementMaker()
 
@@ -76,3 +77,11 @@ def main():
             write_material(compile_material(mat), mat.name)
         if mat.parent.name.startswith("crymat_"):
             write_material(compile_material(mat.parent), mat.parent.name)
+    if (
+        modo.dialogs.yesNo(
+            "Material Created",
+            "Would you like to open the folder containing the material?",
+        )
+        is "yes"
+    ):
+        subprocess.Popen(r'explorer "%s"' % get_scene_root_folder())

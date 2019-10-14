@@ -1,7 +1,6 @@
 from subprocess import Popen, PIPE, STDOUT
 
 import lx
-import modo
 
 
 def set_rc_path():
@@ -23,8 +22,7 @@ def run(**kwargs):
             rc_path,
             "/verbose",
             "/refresh",
-            '/threads=processors'
-            "/vertexindexformat=u16",
+            "/threads=processors" "/vertexindexformat=u16",
             kwargs["path"],
         ],
         shell=True,

@@ -5,6 +5,14 @@ import lx
 import modo
 import modo.constants as c
 
+from cs_cry_export.constants import (
+    CRYMAT_PREFIX,
+    CRYEXPORTNODE_PREFIX,
+    MODO_MATERIAL_STRING,
+    PROXY_NONE,
+    CHANNEL_PROXY_TYPE_NAME,
+)
+
 
 def get_submats_from_cryexport_node(cryexport_node):
     """
@@ -23,7 +31,7 @@ def get_submats_from_cryexport_node(cryexport_node):
     material_names.reverse()
     materials = []
     for mat in scene.items(c.MASK_TYPE):
-        if mat.name.replace("(Material)", "").strip() in material_names:
+        if mat.name.replace(MODO_MATERIAL_STRING, "").strip() in material_names:
             materials.append(mat)
     # sort backwards cuz modo
     return sorted(materials, key=lambda y: 1 - y.parentIndex)
@@ -37,7 +45,7 @@ def get_cry_materials(selected=False):
     )
     ret_mats = []
     for mat in materials:
-        if mat.name.startswith("crymat_"):
+        if mat.name.startswith(CRYMAT_PREFIX):
             ret_mats.append(mat)
 
     return ret_mats
@@ -45,20 +53,47 @@ def get_cry_materials(selected=False):
 
 def mat_name(mat):
     """Get mat name with (Material) Stripped off"""
-    return mat.name.replace("(Material)", "").strip()
+    return mat.name.replace(MODO_MATERIAL_STRING, "").strip()
 
 
 def make_phys_material_name(mat, idx, hash=False):
-    phys_type = mat.channel('proxy_type').get() if mat.channel('proxy_type') is not None else 'physNone'
-    return (
-        "#"
-        if hash
-        else "" + "%s__%s__%s__%s" % (mat.parent.name, mat_name(mat), idx, phys_type)
+    phys_type = (
+        mat.channel(CHANNEL_PROXY_TYPE_NAME).get()
+        if mat.channel(CHANNEL_PROXY_TYPE_NAME) is not None
+        else PROXY_NONE
+    )
+    return "%s%s__%s__%s__%s" % (
+        "#" if hash else "",
+        mat.parent.name,
+        mat_name(mat),
+        idx + 1,
+        phys_type,
     )
 
 
+def get_parent_cryexport_from_selected():
+    scene = modo.Scene()
+    child = (
+        scene.selectedByType(c.MESH_TYPE) + scene.selectedByType(c.GROUPLOCATOR_TYPE)
+    )[0]
+    return get_parent_cryexport_from_child(child)
+
+
+def get_parent_cryexport_from_child(child):
+    if child.name.startswith(CRYEXPORTNODE_PREFIX):
+        return child
+    if child.parents is None:
+        return None
+    if len(child.parents) == 0:
+        return None
+    for parent in child.parents:
+        if parent.name.startswith(CRYEXPORTNODE_PREFIX):
+            return parent
+        get_parent_cryexport_from_child(parent)
+
+
 def make_effect_name(mat, idx):
-    return "%s-%s-submat-effect" % (mat.parent.name, idx)
+    return "%s-%s-submat-effect" % (mat.parent.name, idx + 1)
 
 
 def get_scene_root_folder():
@@ -74,7 +109,7 @@ def get_cryexportnodes(selected=True):
     nodes = []
     items = scene.selected if selected else scene.items(c.GROUPLOCATOR_TYPE)
     for item in items:
-        if item.name.startswith("cryexportnode_"):
+        if item.name.startswith(CRYEXPORTNODE_PREFIX):
             nodes.append(item)
 
     return nodes
@@ -87,8 +122,8 @@ def create_channel(name, item):
     :param item: modo.item.Item The modo item 
     """
     lx.eval(
-        "channel.create {name} string scalar false 0.0 false 0.0 0.0 {item_name} {name}".format(
-            name=name, item_name=item.name
+        "channel.create {name} string item:{item_name} username:{name}".format(
+            name=name, item_name=item.id
         )
     )
 

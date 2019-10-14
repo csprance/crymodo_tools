@@ -7,7 +7,7 @@
 
 ## Meshes
 > The following structure should be used
-* `cryexportnode_example`
+* `CryExportNode_example`
     * `example_group` - UDP options go hjere
         * `proxy_mesh`
         * `mesh1`
@@ -18,26 +18,28 @@
             * `lod2_mesh`     
 
 ## Customer User Channels
-### output_path
+### outputPath
 > Where the cgf file will be export to
-> This is added to the cryexportnode top most folder
+> This is added to the parent CryExportNode
     
     * STRING<DIRECTORY PATH>
      
-### proxy_type
+### proxyType
 > What type of proxy material. This is added to the material
 
-    * NODRAW
-    * NOCOLLIDE
-    * OBSTRUCT
-    * DEFAULT
-    * NONE
+    * physProxyNoDraw
+    * physNoCollide
+    * physObstruct
+    * physNone
 
-### udp_type
+### udp
 > Defines the type of primitive proxy if it's not defined it's considered a RENDERMESH
 > This is added to the mesh_group containing the proxy.
     
-    * RENDERMESH
-    * BOX
-    * CYLINDER
-    * SPHERE
+    * rendermesh
+    * box
+    * cylinder
+    * sphere
+
+### cryHelper
+> Just defined what is a CryHelper Locator

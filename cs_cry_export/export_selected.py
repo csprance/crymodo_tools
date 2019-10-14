@@ -5,8 +5,9 @@ from datetime import datetime
 import lx
 import modo
 
-from cs_cry_export import rc
 import cs_cry_export.utils as utils
+from cs_cry_export import rc
+from cs_cry_export.constants import COLLADA_TEMP_PATH
 from lxml import etree
 from lxml.builder import ElementMaker
 
@@ -22,7 +23,7 @@ class CryDAEBuilder:
     # The path of the DAE file created by the builder
     path = ""
     # the path to the temp collada file
-    collada_temp_path = "crymodo_collada_temp.dae"
+    collada_temp_path = COLLADA_TEMP_PATH
 
     def __init__(self, cryexport_node):
         self.cryexport_node = cryexport_node
@@ -95,7 +96,7 @@ class CryDAEBuilder:
                 )
             ),
             E.library_images(),
-            E.scene(),
+            E.scene(E.instance_visual_scene({"url": "#visual_scene_0"})),
         )
 
     def write(self):

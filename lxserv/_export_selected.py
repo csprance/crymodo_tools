@@ -1,7 +1,7 @@
 import lx
 
-from cs_cry_export.commander import CommanderClass
 import cs_cry_export.export_selected as export_selected
+from cs_cry_export.commander import CommanderClass
 
 
 class ExportSelected(CommanderClass):

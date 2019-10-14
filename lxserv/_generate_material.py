@@ -1,7 +1,7 @@
 import lx
 
-from cs_cry_export.commander import CommanderClass
 import cs_cry_export.generate_material as generate_material
+from cs_cry_export.commander import CommanderClass
 
 
 class GenerateMaterial(CommanderClass):

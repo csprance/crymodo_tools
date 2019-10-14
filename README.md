@@ -1,5 +1,5 @@
-# Modo CryExport
-> CRYENGINE exporter for modo 13^
+# CryModo Tools
+> CRYENGINE exporter and tools for modo 13^ (Might work on other versions)
 
 ## Export
 * Select CryExportNode(s) and click Export Selected or the hotkey `Ctrl-Alt-Shift-E`

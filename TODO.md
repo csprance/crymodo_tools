@@ -1,4 +1,5 @@
 # TODO
+* Design Logo
 * Collapse each group into a node
     * Get all the geometry into one mesh
         * Find Vertices

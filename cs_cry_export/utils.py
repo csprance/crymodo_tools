@@ -72,14 +72,17 @@ def make_phys_material_name(mat, idx, hash=False):
 
 
 def get_parent_cryexport_from_selected():
+    """Given any selected mesh/groupLocator find it's parent CryExportNode"""
     scene = modo.Scene()
     child = (
         scene.selectedByType(c.MESH_TYPE) + scene.selectedByType(c.GROUPLOCATOR_TYPE)
     )[0]
+
     return get_parent_cryexport_from_child(child)
 
 
 def get_parent_cryexport_from_child(child):
+    """Given a child node go and find the parent CryExportNode"""
     if child.name.startswith(CRYEXPORTNODE_PREFIX):
         return child
     if child.parents is None:
@@ -97,14 +100,19 @@ def make_effect_name(mat, idx):
 
 
 def get_scene_root_folder():
-    scene_root = lx.eval1("query sceneservice scene.file ? current")
-    if scene_root is not None:
-        return os.path.dirname(scene_root)
-    sys.exit()
+    filename = modo.Scene().filename
+    if filename:
+        return os.path.dirname(filename)
+    modo.dialogs.alert("Save Scene", "Please save scene before exporting.")
+    raise Exception('Please Save Scene First')
 
 
 def get_cryexportnodes(selected=True):
-    """ Gets all the cryexportnodes in a scene"""
+    """
+    Gets all the cryexportnodes in a scene
+    :param selected: Boolean should we get from the selected items or the scene
+    :return: [modo.item.Item]
+    """
     scene = modo.Scene()
     nodes = []
     items = scene.selected if selected else scene.items(c.GROUPLOCATOR_TYPE)
@@ -115,17 +123,19 @@ def get_cryexportnodes(selected=True):
     return nodes
 
 
-def create_channel(name, item):
+def create_channel(name, item, datatype="string"):
     """
     Creates a user_channel on an item
+    :param datatype: string integer float
     :param name: str The name of the user channel
     :param item: modo.item.Item The modo item 
     """
     lx.eval(
-        "channel.create {name} string item:{item_name} username:{name}".format(
-            name=name, item_name=item.id
+        "channel.create {name} {datatype} item:{item_id} username:{name}".format(
+            name=name, item_id=item.id, datatype=datatype
         )
     )
+    return modo.channel.Channel(name, item)
 
 
 def get_user_input(title):

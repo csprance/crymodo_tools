@@ -5,6 +5,9 @@ from cs_cry_export.constants import (
     CRYEXPORTNODE_PREFIX,
     CHANNEL_OUTPUT_PATH_NAME,
     CHANNEL_UDP_NAME,
+    CHANNEL_FILETYPE_NAME,
+    CHANNEL_EXPORTABLE_NAME,
+    CHANNEL_MERGE_OBJECTS_NAME,
 )
 from cs_cry_export.utils import create_channel, get_user_input
 
@@ -39,10 +42,11 @@ def main():
     model_group.setParent(cry_export_group)
 
     # create channels on groups
-    create_channel(CHANNEL_OUTPUT_PATH_NAME, cry_export_group)
-    cry_export_group.channel(CHANNEL_OUTPUT_PATH_NAME).set("")
-    create_channel(CHANNEL_UDP_NAME, model_group)
-    model_group.channel(CHANNEL_UDP_NAME).set("")
+    create_channel(CHANNEL_OUTPUT_PATH_NAME, cry_export_group).set("..\\")
+    create_channel(CHANNEL_FILETYPE_NAME, cry_export_group).set("1")
+    create_channel(CHANNEL_EXPORTABLE_NAME, cry_export_group).set("1")
+    create_channel(CHANNEL_MERGE_OBJECTS_NAME, cry_export_group).set("0")
+    create_channel(CHANNEL_UDP_NAME, model_group).set("")
 
     # set parents
     children = selected[0].children()

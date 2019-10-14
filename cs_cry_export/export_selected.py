@@ -6,8 +6,14 @@ import lx
 import modo
 
 import cs_cry_export.utils as utils
-from cs_cry_export import rc
-from cs_cry_export.constants import COLLADA_TEMP_PATH
+from cs_cry_export import rc, __version__
+from cs_cry_export.constants import (
+    COLLADA_TEMP_PATH,
+    CRYEXPORTNODE_PREFIX,
+    CHANNEL_FILETYPE_NAME,
+    CHANNEL_EXPORTABLE_NAME,
+    CHANNEL_MERGE_OBJECTS_NAME,
+)
 from lxml import etree
 from lxml.builder import ElementMaker
 
@@ -36,6 +42,18 @@ class CryDAEBuilder:
         )
         self.wpos_matrix = modo.Matrix4(self.cryexport_node.channel("wposMatrix").get())
         self.submats = utils.get_submats_from_cryexport_node(self.cryexport_node)
+        self.neat_name = self.cryexport_node.name.replace(CRYEXPORTNODE_PREFIX, "")
+        self.file_type = self.cryexport_node.channel(CHANNEL_FILETYPE_NAME)
+        if self.file_type is None:
+            self.file_type = "1"
+
+        self.exportable = self.cryexport_node.channel(CHANNEL_EXPORTABLE_NAME)
+        if self.exportable is None:
+            self.exportable = "1"
+
+        self.merge_objects = self.cryexport_node.channel(CHANNEL_MERGE_OBJECTS_NAME)
+        if self.merge_objects is None:
+            self.merge_objects = "0"
 
     def compile(self):
         """
@@ -50,7 +68,7 @@ class CryDAEBuilder:
             E.asset(
                 E.contributor(
                     E.author(os.environ.get("USERNAME")),
-                    E.authoring_tool("CRYENGINE modo COLLADA Exporter 1.0.0"),
+                    E.authoring_tool("CRYENGINE modo COLLADA Exporter {0}".format(__version__)),
                     E.source_data("file://" + self.scene_root.replace("\\", "/")),
                 ),
                 E.created(str(datetime.now())),
@@ -147,16 +165,16 @@ class CryDAEBuilder:
                     E.propagation("NODE"),
                     E.type("CryExportNodeProperties"),
                     E.XSI_Parameter(
-                        {"id": "Filetype", "type": "Integer", "value": "1"}
+                        {"id": "Filetype", "type": "Integer", "value": self.file_type}
                     ),
                     E.XSI_Parameter(
-                        {"id": "Filename", "type": "Text", "value": "polyCube1"}
+                        {"id": "Filename", "type": "Text", "value": self.neat_name}
                     ),
                     E.XSI_Parameter(
-                        {"id": "Exportable", "type": "Boolean", "value": "1"}
+                        {"id": "Exportable", "type": "Boolean", "value": self.exportable}
                     ),
                     E.XSI_Parameter(
-                        {"id": "MergeObjects", "type": "Boolean", "value": "0"}
+                        {"id": "MergeObjects", "type": "Boolean", "value": self.merge_objects}
                     ),
                 ),
             ),

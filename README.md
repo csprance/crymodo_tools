@@ -1,12 +1,19 @@
 # Modo CryExport
 > CRYENGINE exporter for modo 13^
 
+## Export
+* Select CryExportNode(s) and click Export Selected or the hotkey `Ctrl-Alt-Shift-E`
+
 ## Materials
-* To create a CRYENGINE material. Create a material group and group your materials into it. The name must start with `crymat_`
+* To create a CRYENGINE material.
+    * Select an item in the CryExportNode and click Create Mat from Selected or the hotkey `Ctrl-Alt-Shift-C` 
+    * Create a material group and group your materials into it. The name must start with `CryMat_`
 * The materials order will be used to order the material exported and material ids
+* To Create the material xml file select the material mask in modo and click Generate Selected Material or hotkey `Ctrl-Alt-Shift-M`  
 
 ## Meshes
 > The following structure should be used
+> To Set up the needed structure select any meshes and click Setup CryExport
 * `CryExportNode_example`
     * `example_group` - UDP options go hjere
         * `proxy_mesh`

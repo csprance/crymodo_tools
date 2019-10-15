@@ -1,9 +1,10 @@
 import os
+import re
 
 import lx
 import modo
 import modo.constants as c
-
+import cs_cry_export.constants as _c
 from cs_cry_export.constants import (
     CRYMAT_PREFIX,
     CRYEXPORTNODE_PREFIX,
@@ -23,22 +24,17 @@ def restore_selection(func):
     def function_wrapper(*args, **kwargs):
         scene = modo.Scene()
         selected = scene.selected
-        func(*args, **kwargs)
+        x = func(*args, **kwargs)
         scene.deselect()
         scene.select(selected)
+        return x
 
     return function_wrapper
 
 
-def get_submats_from_cryexport_node(cryexport_node):
-    """
-    Gets the materials from a passed in cryexport_node
-    :param cryexport_node:
-    :return:
-    """
+def get_submats_from_nodes(meshes):
     scene = modo.Scene()
     material_names = set()
-    meshes = cryexport_node.children(itemType=c.MESH_TYPE, recursive=True)
     for mesh in meshes:
         geo = mesh.geometry
         for x in xrange(geo.PTagCount(lx.symbol.i_PTAG_MATR)):
@@ -50,7 +46,17 @@ def get_submats_from_cryexport_node(cryexport_node):
         if mat.name.replace(MODO_MATERIAL_STRING, "").strip() in material_names:
             materials.append(mat)
     # sort backwards cuz modo
-    return sorted(materials, key=lambda y: 1 - y.parentIndex)
+    return sorted(materials, key=lambda sm: 1 - sm.parentIndex)
+
+
+def get_submats_from_cryexport_node(cryexport_node):
+    """
+    Gets the materials from a passed in cryexport_node
+    :param cryexport_node:
+    :return:
+    """
+    meshes = cryexport_node.children(itemType=c.MESH_TYPE, recursive=True)
+    return get_submats_from_nodes(meshes)
 
 
 def get_cry_materials(selected=False):
@@ -80,19 +86,27 @@ def mat_name(mat):
     return mat.name.replace(MODO_MATERIAL_STRING, "").strip()
 
 
-def make_phys_material_name(mat, idx, hash=False):
+def group_name(group):
+    """
+    Get group name with _group Stripped off
+    :param group: modo.item.Item the group locator item
+    :return: string The group name with the _group stripped off
+    """
+    return group.name.replace(_c.GROUP_SUFFIX, "").strip()
+
+
+def make_phys_material_name(mat, idx=None, hash=False):
+    if idx is None:
+        idx = (len(mat.parent.children()) - mat.parentIndex) - 1
     phys_type = (
         mat.channel(CHANNEL_PROXY_TYPE_NAME).get()
         if mat.channel(CHANNEL_PROXY_TYPE_NAME) is not None
         else PROXY_NONE
     )
-    return "%s%s__%s__%s__%s" % (
-        "#" if hash else "",
-        mat.parent.name,
-        mat_name(mat),
-        idx + 1,
-        phys_type,
-    )
+    return (
+        "%s%s__%s__%s__%s"
+        % ("#" if hash else "", mat.parent.name, mat_name(mat), idx + 1, phys_type)
+    ).replace(_c.CRYMAT_PREFIX, "")
 
 
 def delete_item(item):
@@ -101,7 +115,10 @@ def delete_item(item):
     :param item: modo.item.Item
     :return: None
     """
-    lx.eval("item.delete item:{0}".format(item.id))
+    try:
+        lx.eval("item.delete item:{0}".format(item.id))
+    except Exception as e:
+        print(e)
 
 
 def get_groups_from_cryexport_node(node):
@@ -115,6 +132,10 @@ def get_groups_from_cryexport_node(node):
         if child.name.endswith("_group"):
             groups.append(child)
     return groups
+
+
+def strip_lod(name):
+    return re.sub(r"_lod._", "", name)
 
 
 @restore_selection
@@ -176,7 +197,9 @@ def make_effect_name(mat, idx):
     :param idx: int
     :return: string effect name
     """
-    return "%s-%s-submat-effect" % (mat.parent.name, idx + 1)
+    return ("%s-%s-submat-effect" % (mat.parent.name, idx + 1)).replace(
+        _c.CRYMAT_PREFIX, ""
+    )
 
 
 def get_scene_root_folder():

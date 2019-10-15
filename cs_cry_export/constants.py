@@ -6,6 +6,7 @@ CRYEXPORTNODE_PREFIX = "CryExportNode_"
 CRYMAT_PREFIX = "CryMat_"
 MODO_MATERIAL_STRING = "(Material)"
 CRYHELPER_PREFIX = "CryHelper_"
+GROUP_SUFFIX = "_group"
 
 # Proxy Type Names
 PROXY_NODRAW = "physProxyNoDraw"

@@ -6,8 +6,8 @@
       <authoring_tool>CRYENGINE modo COLLADA Exporter 1.0.1</authoring_tool>
       <source_data>file://C:/Users/chris/Documents/Luxology/Content/Kits/cs_cry_export/resources/modo/test_export_scene.lxo</source_data>
     </contributor>
-    <created>2019-10-14 21:26:12.826000</created>
-    <modified>2019-10-14 21:26:12.826000</modified>
+    <created>2019-10-15 03:30:58.289000</created>
+    <modified>2019-10-15 03:30:58.289000</modified>
     <revision>1.4.1</revision>
     <unit name="meter" meter="1.0000000000e+000"/>
     <up_axis>Z_UP</up_axis>
@@ -15,7 +15,7 @@
   <library_animation_clips/>
   <library_animations/>
   <library_effects>
-    <effect id="CryMat_MyTestMat-1-submat-effect">
+    <effect id="MyTestMat-1-submat-effect">
       <profile_COMMON>
         <technique sid="default">
           <phong>
@@ -53,7 +53,7 @@
         </technique>
       </profile_COMMON>
     </effect>
-    <effect id="CryMat_MyTestMat-2-submat-effect">
+    <effect id="MyTestMat-2-submat-effect">
       <profile_COMMON>
         <technique sid="default">
           <phong>
@@ -91,7 +91,7 @@
         </technique>
       </profile_COMMON>
     </effect>
-    <effect id="CryMat_MyTestMat-3-submat-effect">
+    <effect id="MyTestMat-3-submat-effect">
       <profile_COMMON>
         <technique sid="default">
           <phong>
@@ -131,14 +131,14 @@
     </effect>
   </library_effects>
   <library_materials>
-    <material id="CryMat_MyTestMat__proxy__1__physProxyNoDraw">
-      <instance_effect url="#CryMat_MyTestMat__proxy__1__physProxyNoDraw"/>
+    <material id="MyTestMat__proxy__1__physProxyNoDraw">
+      <instance_effect url="#MyTestMat__proxy__1__physProxyNoDraw"/>
     </material>
-    <material id="CryMat_MyTestMat__green__2__physNone">
-      <instance_effect url="#CryMat_MyTestMat__green__2__physNone"/>
+    <material id="MyTestMat__green__2__physNone">
+      <instance_effect url="#MyTestMat__green__2__physNone"/>
     </material>
-    <material id="CryMat_MyTestMat__purple__3__physNone">
-      <instance_effect url="#CryMat_MyTestMat__purple__3__physNone"/>
+    <material id="MyTestMat__purple__3__physNone">
+      <instance_effect url="#MyTestMat__purple__3__physNone"/>
     </material>
   </library_materials>
   <library_geometries/>
@@ -152,13 +152,22 @@
         <rotate sid="rotation_x">1.0 0.0 0.0 0.0</rotate>
         <scale sid="scale">1.0 1.0 1.0</scale>
         <node id="MyTestMesh">
-          <translate sid="translation">-0.57 0.0 0.0</translate>
+          <translate sid="translation">-0.569999992847 0.0 0.0</translate>
           <rotate sid="rotation_z">0.0 0.0 1.0 0.0</rotate>
           <rotate sid="rotation_y">0.0 1.0 0.0 0.0</rotate>
           <rotate sid="rotation_x">1.0 0.0 0.0 0.0</rotate>
           <scale sid="scale">1.0 1.0 1.0</scale>
+          <instance_geometry url="MyTestMesh_MyTestMesh_geometry">
+            <bind_material>
+              <technique_common>
+                <instance_material symbol="MyTestMat__proxy__1__physProxyNoDraw" target="#MyTestMat__proxy__1__physProxyNoDraw"/>
+                <instance_material symbol="MyTestMat__green__2__physNone" target="#MyTestMat__green__2__physNone"/>
+                <instance_material symbol="MyTestMat__purple__3__physNone" target="#MyTestMat__purple__3__physNone"/>
+              </technique_common>
+            </bind_material>
+          </instance_geometry>
           <node id="MyHelper">
-            <translate sid="translation">-0.57 1.0 0.0</translate>
+            <translate sid="translation">-0.569999992847 1.0 0.0</translate>
             <rotate sid="rotation_z">0.0 0.0 1.0 0.0</rotate>
             <rotate sid="rotation_y">0.0 1.0 0.0 0.0</rotate>
             <rotate sid="rotation_x">1.0 0.0 0.0 0.0</rotate>
@@ -173,26 +182,55 @@
             </extra>
           </node>
           <node id="_lod1_MyTestMesh">
-            <translate sid="translation">-0.57 0.0 0.0</translate>
+            <translate sid="translation">-0.569999992847 0.0 0.0</translate>
             <rotate sid="rotation_z">0.0 0.0 1.0 0.0</rotate>
             <rotate sid="rotation_y">0.0 1.0 0.0 0.0</rotate>
             <rotate sid="rotation_x">1.0 0.0 0.0 0.0</rotate>
             <scale sid="scale">1.0 1.0 1.0</scale>
+            <instance_geometry url="MyTestMesh__lod1_MyTestMesh_geometry">
+              <bind_material>
+                <technique_common>
+                  <instance_material symbol="MyTestMat__green__2__physNone" target="#MyTestMat__green__2__physNone"/>
+                  <instance_material symbol="MyTestMat__purple__3__physNone" target="#MyTestMat__purple__3__physNone"/>
+                </technique_common>
+              </bind_material>
+            </instance_geometry>
           </node>
           <node id="_lod2_MyTestMesh">
-            <translate sid="translation">-0.57 0.0 0.0</translate>
+            <translate sid="translation">-0.569999992847 0.0 0.0</translate>
             <rotate sid="rotation_z">0.0 0.0 1.0 0.0</rotate>
             <rotate sid="rotation_y">0.0 1.0 0.0 0.0</rotate>
             <rotate sid="rotation_x">1.0 0.0 0.0 0.0</rotate>
             <scale sid="scale">1.0 1.0 1.0</scale>
+            <instance_geometry url="MyTestMesh__lod2_MyTestMesh_geometry">
+              <bind_material>
+                <technique_common>
+                  <instance_material symbol="MyTestMat__green__2__physNone" target="#MyTestMat__green__2__physNone"/>
+                  <instance_material symbol="MyTestMat__purple__3__physNone" target="#MyTestMat__purple__3__physNone"/>
+                </technique_common>
+              </bind_material>
+            </instance_geometry>
           </node>
           <node id="_lod3_MyTestMesh">
-            <translate sid="translation">-0.57 0.0 0.0</translate>
+            <translate sid="translation">-0.569999992847 0.0 0.0</translate>
             <rotate sid="rotation_z">0.0 0.0 1.0 0.0</rotate>
             <rotate sid="rotation_y">0.0 1.0 0.0 0.0</rotate>
             <rotate sid="rotation_x">1.0 0.0 0.0 0.0</rotate>
             <scale sid="scale">1.0 1.0 1.0</scale>
+            <instance_geometry url="MyTestMesh__lod3_MyTestMesh_geometry">
+              <bind_material>
+                <technique_common>
+                  <instance_material symbol="MyTestMat__green__2__physNone" target="#MyTestMat__green__2__physNone"/>
+                  <instance_material symbol="MyTestMat__purple__3__physNone" target="#MyTestMat__purple__3__physNone"/>
+                </technique_common>
+              </bind_material>
+            </instance_geometry>
           </node>
+          <extra>
+            <technique profile="CryEngine">
+              <properties>BOX</properties>
+            </technique>
+          </extra>
         </node>
         <extra>
           <technique profile="CryEngine">

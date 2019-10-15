@@ -41,6 +41,8 @@ class CryDAEBuilder:
     path = ""
     # the path to the temp collada file
     collada_temp_path = COLLADA_TEMP_PATH
+    # a list of modo items we should delete as a cleanup step
+    cleanup = []
 
     def __init__(self, cryexport_node):
         self.cryexport_node = cryexport_node
@@ -131,6 +133,8 @@ class CryDAEBuilder:
             E.library_images(),
             E.scene(E.instance_visual_scene({"url": "#visual_scene_0"})),
         )
+        for item in self.cleanup:
+            utils.delete_item(item)
 
     def write(self):
         """
@@ -155,13 +159,12 @@ class CryDAEBuilder:
     def get_root_scale(self):
         return utils.vtos(self.wpos_matrix.scale())
 
-    # FIXME: I think i need to use something besides wposMatrix maybe something taking it's parent into account?
     def make_translate_element(self, node):
-        m = modo.Matrix4(node.channel("wposMatrix").get())
+        m = modo.Matrix4(node.channel("worldMatrix").get())
         return E.translate({"sid": "translation"}, utils.vtos(m.position))
 
     def make_rotation_elements(self, node):
-        m = modo.Matrix4(node.channel("wposMatrix").get())
+        m = modo.Matrix4(node.channel("worldMatrix").get())
         x, y, z, rest = m.asRotateMatrix()
         return [
             E.rotate({"sid": "rotation_z"}, utils.vtos(z)),
@@ -170,10 +173,15 @@ class CryDAEBuilder:
         ]
 
     def make_scale_element(self, node):
-        m = modo.Matrix4(node.channel("wposMatrix").get())
+        m = modo.Matrix4(node.channel("worldMatrix").get())
         return E.scale({"sid": "scale"}, utils.vtos(m.scale()))
 
     def make_transforms(self, node):
+        """
+        Creates a list of transform nodes (lxml.etree._Element_)
+        :param node: modo.item.Item the modo item you want to create transforms for
+        :return: list translate, rotate, scale transform items in a list to destructure with *
+        """
         trans = self.make_translate_element(node)
         rot = self.make_rotation_elements(node)
         scale = self.make_scale_element(node)
@@ -183,6 +191,40 @@ class CryDAEBuilder:
     #                   XML Utility Methods Methods
     #
     # ####################################################################################
+
+    def create_udp_extra(self, group):
+        udp = group.channel("udp")
+        udp = udp.get() if udp is not None else None
+        if udp is not None:
+            return E.extra(E.technique({"profile": "CryEngine"}, E.properties(udp)))
+
+    def create_instance_geometry(self, group):
+        """
+        * Get the merged geo for this _group
+        * Find the submats used on it
+        * create the node
+        :return: lxml.etree._Element
+        """
+        combined_mesh = utils.merge_group_meshes(group)
+        self.cleanup.append(combined_mesh)
+        group_name = utils.group_name(group)
+
+        return E.instance_geometry(
+            {"url": "%s_%s_geometry" % (utils.strip_lod(group_name), group_name)},
+            E.bind_material(
+                E.technique_common(
+                    *map(
+                        lambda sm: E.instance_material(
+                            {
+                                "symbol": utils.make_phys_material_name(sm),
+                                "target": utils.make_phys_material_name(sm, hash=True),
+                            }
+                        ),
+                        utils.get_submats_from_nodes([combined_mesh]),
+                    )
+                )
+            ),
+        )
 
     def create_group_elements(self):
         """
@@ -196,7 +238,11 @@ class CryDAEBuilder:
                     {"id": group.name.replace("_group", "").strip()},
                     *(
                         self.make_transforms(group)
+                        + [self.create_instance_geometry(group)]
                         + self.create_group_children_elements(group)
+                        + filter(
+                            lambda x: x is not None, [self.create_udp_extra(group)]
+                        )
                     )
                 )
             )
@@ -215,7 +261,7 @@ class CryDAEBuilder:
         ] + [
             E.node(
                 {"id": child.name.replace("_group", "").strip()},
-                *self.make_transforms(child)
+                *self.make_transforms(child) + [self.create_instance_geometry(child)]
             )
             for child in group.childrenByType(c.GROUPLOCATOR_TYPE)
         ]

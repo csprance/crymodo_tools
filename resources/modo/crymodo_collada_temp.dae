@@ -3,11 +3,11 @@
   <asset>
     <contributor>
       <author>chris</author>
-      <authoring_tool>CRYENGINE modo COLLADA Exporter 1.0.0</authoring_tool>
+      <authoring_tool>CRYENGINE modo COLLADA Exporter 1.0.1</authoring_tool>
       <source_data>file://C:/Users/chris/Documents/Luxology/Content/Kits/cs_cry_export/resources/modo/test_export_scene.lxo</source_data>
     </contributor>
-    <created>2019-10-14 00:24:49.533000</created>
-    <modified>2019-10-14 00:24:49.533000</modified>
+    <created>2019-10-14 21:26:12.826000</created>
+    <modified>2019-10-14 21:26:12.826000</modified>
     <revision>1.4.1</revision>
     <unit name="meter" meter="1.0000000000e+000"/>
     <up_axis>Z_UP</up_axis>
@@ -145,12 +145,55 @@
   <library_controllers/>
   <library_visual_scenes>
     <visual_scene id="visual_scene_0" name="untitled">
-      <node id="CryExportNode_MyTestMeshSecond">
+      <node id="CryExportNode_MyTestMesh">
         <translate sid="translation">0.0 0.0 0.0</translate>
         <rotate sid="rotation_z">0.0 0.0 1.0 0.0</rotate>
         <rotate sid="rotation_y">0.0 1.0 0.0 0.0</rotate>
         <rotate sid="rotation_x">1.0 0.0 0.0 0.0</rotate>
         <scale sid="scale">1.0 1.0 1.0</scale>
+        <node id="MyTestMesh">
+          <translate sid="translation">-0.57 0.0 0.0</translate>
+          <rotate sid="rotation_z">0.0 0.0 1.0 0.0</rotate>
+          <rotate sid="rotation_y">0.0 1.0 0.0 0.0</rotate>
+          <rotate sid="rotation_x">1.0 0.0 0.0 0.0</rotate>
+          <scale sid="scale">1.0 1.0 1.0</scale>
+          <node id="MyHelper">
+            <translate sid="translation">-0.57 1.0 0.0</translate>
+            <rotate sid="rotation_z">0.0 0.0 1.0 0.0</rotate>
+            <rotate sid="rotation_y">0.0 1.0 0.0 0.0</rotate>
+            <rotate sid="rotation_x">1.0 0.0 0.0 0.0</rotate>
+            <scale sid="scale">1.0 1.0 1.0</scale>
+            <extra>
+              <technique profile="CryEngine">
+                <helper type="dummy">
+                  <bound_box_min>-5 -5 -5</bound_box_min>
+                  <bound_box_max>5 5 5</bound_box_max>
+                </helper>
+              </technique>
+            </extra>
+          </node>
+          <node id="_lod1_MyTestMesh">
+            <translate sid="translation">-0.57 0.0 0.0</translate>
+            <rotate sid="rotation_z">0.0 0.0 1.0 0.0</rotate>
+            <rotate sid="rotation_y">0.0 1.0 0.0 0.0</rotate>
+            <rotate sid="rotation_x">1.0 0.0 0.0 0.0</rotate>
+            <scale sid="scale">1.0 1.0 1.0</scale>
+          </node>
+          <node id="_lod2_MyTestMesh">
+            <translate sid="translation">-0.57 0.0 0.0</translate>
+            <rotate sid="rotation_z">0.0 0.0 1.0 0.0</rotate>
+            <rotate sid="rotation_y">0.0 1.0 0.0 0.0</rotate>
+            <rotate sid="rotation_x">1.0 0.0 0.0 0.0</rotate>
+            <scale sid="scale">1.0 1.0 1.0</scale>
+          </node>
+          <node id="_lod3_MyTestMesh">
+            <translate sid="translation">-0.57 0.0 0.0</translate>
+            <rotate sid="rotation_z">0.0 0.0 1.0 0.0</rotate>
+            <rotate sid="rotation_y">0.0 1.0 0.0 0.0</rotate>
+            <rotate sid="rotation_x">1.0 0.0 0.0 0.0</rotate>
+            <scale sid="scale">1.0 1.0 1.0</scale>
+          </node>
+        </node>
         <extra>
           <technique profile="CryEngine">
             <properties>DoNotMerge
@@ -163,7 +206,7 @@ customExportPath=..\</properties>
               <propagation>NODE</propagation>
               <type>CryExportNodeProperties</type>
               <XSI_Parameter type="Integer" id="Filetype" value="1"/>
-              <XSI_Parameter type="Text" id="Filename" value="MyTestMeshSecond"/>
+              <XSI_Parameter type="Text" id="Filename" value="MyTestMesh"/>
               <XSI_Parameter type="Boolean" id="Exportable" value="1"/>
               <XSI_Parameter type="Boolean" id="MergeObjects" value="0"/>
             </XSI_CustomPSet>

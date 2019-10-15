@@ -4,15 +4,18 @@ from datetime import datetime
 
 import lx
 import modo
+import modo.constants as c
 
 import cs_cry_export.utils as utils
 from cs_cry_export import rc, __version__
+import cs_cry_export.constants as _c
 from cs_cry_export.constants import (
     COLLADA_TEMP_PATH,
     CRYEXPORTNODE_PREFIX,
     CHANNEL_FILETYPE_NAME,
     CHANNEL_EXPORTABLE_NAME,
     CHANNEL_MERGE_OBJECTS_NAME,
+    AXIS_MAPPING,
 )
 from lxml import etree
 from lxml.builder import ElementMaker
@@ -22,6 +25,14 @@ E = ElementMaker()
 
 
 class CryDAEBuilder:
+    """
+    Given a parent CryExport node compile it into a DAE and write it to an xml file
+    dae = CryDAEBuilder(cryexport_node)
+    # Compile collects all the data and creates the main xml file structure
+    dae.compile()
+    # write the data structure to a .dae file
+    dae.write()
+    """
     # the dae element
     xml = E.COLLADA()
     # the lxo file path
@@ -55,6 +66,8 @@ class CryDAEBuilder:
         if self.merge_objects is None:
             self.merge_objects = "0"
 
+        self.groups = utils.get_groups_from_cryexport_node(self.cryexport_node)
+
     def compile(self):
         """
         Call me first to gather the data and compile the dae file
@@ -68,7 +81,9 @@ class CryDAEBuilder:
             E.asset(
                 E.contributor(
                     E.author(os.environ.get("USERNAME")),
-                    E.authoring_tool("CRYENGINE modo COLLADA Exporter {0}".format(__version__)),
+                    E.authoring_tool(
+                        "CRYENGINE modo COLLADA Exporter {0}".format(__version__)
+                    ),
                     E.source_data("file://" + self.scene_root.replace("\\", "/")),
                 ),
                 E.created(str(datetime.now())),
@@ -108,8 +123,8 @@ class CryDAEBuilder:
                         E.rotate({"sid": "rotation_y"}, self.get_root_rotation("y")),
                         E.rotate({"sid": "rotation_x"}, self.get_root_rotation("x")),
                         E.scale({"sid": "scale"}, self.get_root_scale()),
-                        # self.create_helper_node(),
-                        self.create_extra(fileType="cgf", customExportPath="..\\"),
+                        *self.create_group_elements()
+                        + [self.create_extra(fileType="cgf", customExportPath="..\\")]
                     ),
                 )
             ),
@@ -132,19 +147,78 @@ class CryDAEBuilder:
     #
     # ####################################################################################
     def get_root_translate(self):
-        return " ".join(map(str, self.wpos_matrix.position))
+        return utils.vtos(self.wpos_matrix.position)
 
     def get_root_rotation(self, axis):
-        _axis = {"x": 0, "y": 1, "z": 2}[axis]
-        return " ".join(map(str, self.wpos_matrix.asRotateMatrix()[_axis]))
+        return utils.vtos(self.wpos_matrix.asRotateMatrix()[AXIS_MAPPING[axis]])
 
     def get_root_scale(self):
-        return " ".join(map(str, self.wpos_matrix.scale()))
+        return utils.vtos(self.wpos_matrix.scale())
+
+    # FIXME: I think i need to use something besides wposMatrix maybe something taking it's parent into account?
+    def make_translate_element(self, node):
+        m = modo.Matrix4(node.channel("wposMatrix").get())
+        return E.translate({"sid": "translation"}, utils.vtos(m.position))
+
+    def make_rotation_elements(self, node):
+        m = modo.Matrix4(node.channel("wposMatrix").get())
+        x, y, z, rest = m.asRotateMatrix()
+        return [
+            E.rotate({"sid": "rotation_z"}, utils.vtos(z)),
+            E.rotate({"sid": "rotation_y"}, utils.vtos(y)),
+            E.rotate({"sid": "rotation_x"}, utils.vtos(x)),
+        ]
+
+    def make_scale_element(self, node):
+        m = modo.Matrix4(node.channel("wposMatrix").get())
+        return E.scale({"sid": "scale"}, utils.vtos(m.scale()))
+
+    def make_transforms(self, node):
+        trans = self.make_translate_element(node)
+        rot = self.make_rotation_elements(node)
+        scale = self.make_scale_element(node)
+        return [trans] + rot + [scale]
 
     # ####################################################################################
     #                   XML Utility Methods Methods
     #
     # ####################################################################################
+
+    def create_group_elements(self):
+        """
+        create all the group nodes
+        :return: tuple modo.item.Item
+        """
+        group_elements = []
+        for group in self.groups:
+            group_elements.append(
+                E.node(
+                    {"id": group.name.replace("_group", "").strip()},
+                    *(
+                        self.make_transforms(group)
+                        + self.create_group_children_elements(group)
+                    )
+                )
+            )
+
+        return group_elements
+
+    def create_group_children_elements(self, group):
+        """
+        Get all the elements of the _group and create xml elements from them
+        :param group: modo.item.Item the modo item we want to search through
+        :return: tuple [lxml.etree._Element] a list of Elements
+        """
+        return [
+            self.create_helper_node(child)
+            for child in group.childrenByType(c.LOCATOR_TYPE)
+        ] + [
+            E.node(
+                {"id": child.name.replace("_group", "").strip()},
+                *self.make_transforms(child)
+            )
+            for child in group.childrenByType(c.GROUPLOCATOR_TYPE)
+        ]
 
     def create_extra(self, **kwargs):
         properties = "\n".join(
@@ -171,41 +245,39 @@ class CryDAEBuilder:
                         {"id": "Filename", "type": "Text", "value": self.neat_name}
                     ),
                     E.XSI_Parameter(
-                        {"id": "Exportable", "type": "Boolean", "value": self.exportable}
+                        {
+                            "id": "Exportable",
+                            "type": "Boolean",
+                            "value": self.exportable,
+                        }
                     ),
                     E.XSI_Parameter(
-                        {"id": "MergeObjects", "type": "Boolean", "value": self.merge_objects}
+                        {
+                            "id": "MergeObjects",
+                            "type": "Boolean",
+                            "value": self.merge_objects,
+                        }
                     ),
                 ),
             ),
         )
 
-    def create_helper_node(
-        self,
-        id="default",
-        trans="0 0 0",
-        rot_z="0 0 1 0",
-        rot_y="0 1 0 0",
-        rot_x="1 0 0 0",
-        scale="1 1 1",
-    ):
+    def create_helper_node(self, group_node):
         node = E.node(
-            {"id": id},
-            E.translate({"sid": "translation"}, trans),
-            E.rotate({"sid": "rotation_z"}, rot_z),
-            E.rotate({"sid": "rotation_y"}, rot_y),
-            E.rotate({"sid": "rotation_x"}, rot_x),
-            E.scale({"sid": "scale"}, scale),
-            E.extra(
-                E.technique(
-                    {"profile": "CryEngine"},
-                    E.helper(
-                        {"type": "dummy"},
-                        E.bound_box_min("-5 -5 -5"),
-                        E.bound_box_max("5 5 5"),
-                    ),
+            {"id": group_node.name.replace(_c.CRYHELPER_PREFIX, "")},
+            *self.make_transforms(group_node)
+            + [
+                E.extra(
+                    E.technique(
+                        {"profile": "CryEngine"},
+                        E.helper(
+                            {"type": "dummy"},
+                            E.bound_box_min("-5 -5 -5"),
+                            E.bound_box_max("5 5 5"),
+                        ),
+                    )
                 )
-            ),
+            ]
         )
 
         return node

@@ -1,5 +1,4 @@
 import os
-import sys
 
 import lx
 import modo
@@ -12,6 +11,23 @@ from cs_cry_export.constants import (
     PROXY_NONE,
     CHANNEL_PROXY_TYPE_NAME,
 )
+
+
+def vtos(vec):
+    return " ".join(map(str, vec))
+
+
+def restore_selection(func):
+    """Decorator Function to restore user selection"""
+
+    def function_wrapper(*args, **kwargs):
+        scene = modo.Scene()
+        selected = scene.selected
+        func(*args, **kwargs)
+        scene.deselect()
+        scene.select(selected)
+
+    return function_wrapper
 
 
 def get_submats_from_cryexport_node(cryexport_node):
@@ -38,7 +54,11 @@ def get_submats_from_cryexport_node(cryexport_node):
 
 
 def get_cry_materials(selected=False):
-    # gets all the cry materials in the scene
+    """
+    gets all the cry materials in the scene
+    :param selected: Boolean should we look in the scene or the selected items
+    :return: [modo.item.Item] material nodes
+    """
     scene = modo.Scene()
     materials = (
         scene.selectedByType(c.MASK_TYPE) if selected else scene.items(c.MASK_TYPE)
@@ -52,7 +72,11 @@ def get_cry_materials(selected=False):
 
 
 def mat_name(mat):
-    """Get mat name with (Material) Stripped off"""
+    """
+    Get mat name with (Material) Stripped off
+    :param mat: modo.item.Item the material item
+    :return: string The material name with the (material) stripped off
+    """
     return mat.name.replace(MODO_MATERIAL_STRING, "").strip()
 
 
@@ -71,8 +95,54 @@ def make_phys_material_name(mat, idx, hash=False):
     )
 
 
+def delete_item(item):
+    """
+    Delete an item
+    :param item: modo.item.Item
+    :return: None
+    """
+    lx.eval("item.delete item:{0}".format(item.id))
+
+
+def get_groups_from_cryexport_node(node):
+    """
+    Given a CryExportNode get the groups in that folder
+    :param node: modo.item.Item The CryExportNode item
+    :return: list of GroupLocator modo.item
+    """
+    groups = []
+    for child in node.children():
+        if child.name.endswith("_group"):
+            groups.append(child)
+    return groups
+
+
+@restore_selection
+def merge_group_meshes(group, name="DELETEME"):
+    """
+    Merge a groups meshes into a single mesh and return that modo.item.Item
+    :param group: modo.item.Item GroupLocator
+    :param name: string Name of the item Default: DELETME
+    :return: modo.item.Item
+    """
+    scene = modo.Scene()
+    combine = scene.addItem(c.MESH_TYPE, name=name)
+    for child in group.childrenByType(c.MESH_TYPE):
+        scene.select(child, add=True)
+        lx.eval("item.componentMode polygon true")
+        lx.eval("select.drop polygon")
+        lx.eval("select.invert")
+        lx.eval("copy")
+        scene.select(combine)
+        lx.eval("paste")
+    return combine
+
+
 def get_parent_cryexport_from_selected():
-    """Given any selected mesh/groupLocator find it's parent CryExportNode"""
+    """
+    Given any selected mesh/groupLocator find it's parent CryExportNode
+    :return: modo.item.Item CryExportNode Item
+    """
     scene = modo.Scene()
     child = (
         scene.selectedByType(c.MESH_TYPE) + scene.selectedByType(c.GROUPLOCATOR_TYPE)
@@ -82,7 +152,11 @@ def get_parent_cryexport_from_selected():
 
 
 def get_parent_cryexport_from_child(child):
-    """Given a child node go and find the parent CryExportNode"""
+    """
+    Given a child node go and find the parent CryExportNode
+    :param child: modo.item.Item the item to look in it's parents for
+    :return: None | modo.item.Item the parent CryExportNode
+    """
     if child.name.startswith(CRYEXPORTNODE_PREFIX):
         return child
     if child.parents is None:
@@ -96,15 +170,25 @@ def get_parent_cryexport_from_child(child):
 
 
 def make_effect_name(mat, idx):
+    """
+    Make the <effect> dae xml tag name
+    :param mat: modo.item.Item of a c.MASK_TYPE
+    :param idx: int
+    :return: string effect name
+    """
     return "%s-%s-submat-effect" % (mat.parent.name, idx + 1)
 
 
 def get_scene_root_folder():
+    """
+    Get the scenes source location root folder
+    :return: string Root Folder Path
+    """
     filename = modo.Scene().filename
     if filename:
         return os.path.dirname(filename)
     modo.dialogs.alert("Save Scene", "Please save scene before exporting.")
-    raise Exception('Please Save Scene First')
+    raise Exception("Please Save Scene First")
 
 
 def get_cryexportnodes(selected=True):

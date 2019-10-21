@@ -1,14 +1,7 @@
 import modo
 import modo.constants as c
 
-from cs_cry_export.constants import (
-    CRYEXPORTNODE_PREFIX,
-    CHANNEL_OUTPUT_PATH_NAME,
-    CHANNEL_UDP_NAME,
-    CHANNEL_FILETYPE_NAME,
-    CHANNEL_EXPORTABLE_NAME,
-    CHANNEL_MERGE_OBJECTS_NAME,
-)
+import cs_cry_export.constants as _c
 from cs_cry_export.utils import create_channel, get_user_input
 
 
@@ -33,7 +26,7 @@ def main():
             selected = scene.selectedByType(c.GROUPLOCATOR_TYPE)
 
     # create the main export group
-    cry_node_name = CRYEXPORTNODE_PREFIX + selected[0].name
+    cry_node_name = _c.CRYEXPORTNODE_PREFIX + selected[0].name
     cry_export_group = scene.addItem(c.GROUPLOCATOR_TYPE, name=cry_node_name)
 
     # create the group export node
@@ -42,11 +35,11 @@ def main():
     model_group.setParent(cry_export_group)
 
     # create channels on groups
-    create_channel(CHANNEL_OUTPUT_PATH_NAME, cry_export_group).set("..\\")
-    create_channel(CHANNEL_FILETYPE_NAME, cry_export_group).set("1")
-    create_channel(CHANNEL_EXPORTABLE_NAME, cry_export_group).set("1")
-    create_channel(CHANNEL_MERGE_OBJECTS_NAME, cry_export_group).set("0")
-    create_channel(CHANNEL_UDP_NAME, model_group).set("")
+    create_channel(_c.CHANNEL_OUTPUT_PATH_NAME, cry_export_group).set("..\\")
+    create_channel(_c.CHANNEL_FILETYPE_NAME, cry_export_group).set("1")
+    create_channel(_c.CHANNEL_EXPORTABLE_NAME, cry_export_group).set("1")
+    create_channel(_c.CHANNEL_MERGE_OBJECTS_NAME, cry_export_group).set("0")
+    create_channel(_c.CHANNEL_UDP_NAME, model_group).set("")
 
     # set parents
     children = selected[0].children()

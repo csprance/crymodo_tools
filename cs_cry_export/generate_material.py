@@ -4,11 +4,7 @@ import subprocess
 import modo
 import modo.constants as c
 
-from cs_cry_export.constants import (
-    CRYMAT_PREFIX,
-    MODO_MATERIAL_STRING,
-    CHANNEL_PROXY_TYPE_NAME,
-)
+import cs_cry_export.constants as _c
 from cs_cry_export.utils import get_scene_root_folder
 from lxml import etree
 from lxml.builder import ElementMaker
@@ -19,12 +15,12 @@ E = ElementMaker()
 def compile_material(mat):
     # TODO: Sort these by parentIndex
     children_names = [
-        submat.name.replace(MODO_MATERIAL_STRING, "").strip()
+        submat.name.replace(_c.MODO_MATERIAL_STRING, "").strip()
         for submat in mat.children()
     ]
     proxy_types = [
-        submat.channel(CHANNEL_PROXY_TYPE_NAME).get()
-        if submat.channel(CHANNEL_PROXY_TYPE_NAME) is not None
+        submat.channel(_c.CHANNEL_PROXY_TYPE_NAME).get()
+        if submat.channel(_c.CHANNEL_PROXY_TYPE_NAME) is not None
         else None
         for submat in mat.children()
     ]
@@ -70,7 +66,7 @@ def compile_material(mat):
 def write_material(xml, name):
     scene_root = get_scene_root_folder()
     with open(
-        os.path.join(scene_root, name.replace(CRYMAT_PREFIX, "") + ".mtl"), "w"
+        os.path.join(scene_root, name.replace(_c.CRYMAT_PREFIX, "") + ".mtl"), "w"
     ) as f:
         f.write(etree.tostring(xml, pretty_print=True))
 
@@ -82,9 +78,9 @@ def main():
     if len(materials) == 0:
         return modo.dialogs.alert("Warning", "No CryMaterial Selected")
     for mat in materials:
-        if mat.name.startswith(CRYMAT_PREFIX):
+        if mat.name.startswith(_c.CRYMAT_PREFIX):
             write_material(compile_material(mat), mat.name)
-        if mat.parent.name.startswith(CRYMAT_PREFIX):
+        if mat.parent.name.startswith(_c.CRYMAT_PREFIX):
             write_material(compile_material(mat.parent), mat.parent.name)
     if (
         modo.dialogs.yesNo(

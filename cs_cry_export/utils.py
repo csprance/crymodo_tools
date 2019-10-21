@@ -5,13 +5,6 @@ import lx
 import modo
 import modo.constants as c
 import cs_cry_export.constants as _c
-from cs_cry_export.constants import (
-    CRYMAT_PREFIX,
-    CRYEXPORTNODE_PREFIX,
-    MODO_MATERIAL_STRING,
-    PROXY_NONE,
-    CHANNEL_PROXY_TYPE_NAME,
-)
 
 
 def vtos(vec):
@@ -43,7 +36,7 @@ def get_submats_from_nodes(meshes):
     material_names.reverse()
     materials = []
     for mat in scene.items(c.MASK_TYPE):
-        if mat.name.replace(MODO_MATERIAL_STRING, "").strip() in material_names:
+        if mat.name.replace(_c.MODO_MATERIAL_STRING, "").strip() in material_names:
             materials.append(mat)
     # sort backwards cuz modo
     return sorted(materials, key=lambda sm: 1 - sm.parentIndex)
@@ -71,7 +64,7 @@ def get_cry_materials(selected=False):
     )
     ret_mats = []
     for mat in materials:
-        if mat.name.startswith(CRYMAT_PREFIX):
+        if mat.name.startswith(_c.CRYMAT_PREFIX):
             ret_mats.append(mat)
 
     return ret_mats
@@ -83,7 +76,7 @@ def mat_name(mat):
     :param mat: modo.item.Item the material item
     :return: string The material name with the (material) stripped off
     """
-    return mat.name.replace(MODO_MATERIAL_STRING, "").strip()
+    return mat.name.replace(_c.MODO_MATERIAL_STRING, "").strip()
 
 
 def group_name(group):
@@ -99,9 +92,9 @@ def make_phys_material_name(mat, idx=None, hash=False):
     if idx is None:
         idx = (len(mat.parent.children()) - mat.parentIndex) - 1
     phys_type = (
-        mat.channel(CHANNEL_PROXY_TYPE_NAME).get()
-        if mat.channel(CHANNEL_PROXY_TYPE_NAME) is not None
-        else PROXY_NONE
+        mat.channel(_c.CHANNEL_PROXY_TYPE_NAME).get()
+        if mat.channel(_c.CHANNEL_PROXY_TYPE_NAME) is not None
+        else _c.PROXY_NONE
     )
     return (
         "%s%s__%s__%s__%s"
@@ -178,14 +171,14 @@ def get_parent_cryexport_from_child(child):
     :param child: modo.item.Item the item to look in it's parents for
     :return: None | modo.item.Item the parent CryExportNode
     """
-    if child.name.startswith(CRYEXPORTNODE_PREFIX):
+    if child.name.startswith(_c.CRYEXPORTNODE_PREFIX):
         return child
     if child.parents is None:
         return None
     if len(child.parents) == 0:
         return None
     for parent in child.parents:
-        if parent.name.startswith(CRYEXPORTNODE_PREFIX):
+        if parent.name.startswith(_c.CRYEXPORTNODE_PREFIX):
             return parent
         get_parent_cryexport_from_child(parent)
 
@@ -224,7 +217,7 @@ def get_cryexportnodes(selected=True):
     nodes = []
     items = scene.selected if selected else scene.items(c.GROUPLOCATOR_TYPE)
     for item in items:
-        if item.name.startswith(CRYEXPORTNODE_PREFIX):
+        if item.name.startswith(_c.CRYEXPORTNODE_PREFIX):
             nodes.append(item)
 
     return nodes

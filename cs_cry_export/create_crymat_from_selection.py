@@ -2,7 +2,7 @@ import modo
 import modo.constants as c
 
 import cs_cry_export.utils as utils
-from cs_cry_export.constants import CRYMAT_PREFIX, CHANNEL_PROXY_TYPE_NAME
+import cs_cry_export.constants as _c
 
 
 def main():
@@ -13,14 +13,14 @@ def main():
     result = utils.get_user_input("Helper Name.")
     # create a new material mask group
     parent = scene.addItem(c.MASK_TYPE)
-    parent.name = CRYMAT_PREFIX + result
+    parent.name = _c.CRYMAT_PREFIX + result
     # Add the needed channels to the material masks
     for material in materials:
         # add all the mats used on the mesh to that group
         material.setParent(parent)
-        if material.channel(CHANNEL_PROXY_TYPE_NAME) is None:
-            utils.create_channel(CHANNEL_PROXY_TYPE_NAME, material)
-            material.channel(CHANNEL_PROXY_TYPE_NAME).set("physNone")
+        if material.channel(_c.CHANNEL_PROXY_TYPE_NAME) is None:
+            utils.create_channel(_c.CHANNEL_PROXY_TYPE_NAME, material)
+            material.channel(_c.CHANNEL_PROXY_TYPE_NAME).set("physNone")
 
 
 if __name__ == "__main__":

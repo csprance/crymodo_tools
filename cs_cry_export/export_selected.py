@@ -9,14 +9,6 @@ import modo.constants as c
 import cs_cry_export.utils as utils
 from cs_cry_export import rc, __version__
 import cs_cry_export.constants as _c
-from cs_cry_export.constants import (
-    COLLADA_TEMP_PATH,
-    CRYEXPORTNODE_PREFIX,
-    CHANNEL_FILETYPE_NAME,
-    CHANNEL_EXPORTABLE_NAME,
-    CHANNEL_MERGE_OBJECTS_NAME,
-    AXIS_MAPPING,
-)
 from lxml import etree
 from lxml.builder import ElementMaker
 
@@ -40,7 +32,7 @@ class CryDAEBuilder:
     # The path of the DAE file created by the builder
     path = ""
     # the path to the temp collada file
-    collada_temp_path = COLLADA_TEMP_PATH
+    collada_temp_path = _c.COLLADA_TEMP_PATH
     # a list of modo items we should delete as a cleanup step
     cleanup = []
 
@@ -55,18 +47,22 @@ class CryDAEBuilder:
         )
         self.wpos_matrix = modo.Matrix4(self.cryexport_node.channel("wposMatrix").get())
         self.submats = utils.get_submats_from_cryexport_node(self.cryexport_node)
-        self.neat_name = self.cryexport_node.name.replace(CRYEXPORTNODE_PREFIX, "")
-        self.file_type = self.cryexport_node.channel(CHANNEL_FILETYPE_NAME)
-        if self.file_type is None:
-            self.file_type = "1"
-
-        self.exportable = self.cryexport_node.channel(CHANNEL_EXPORTABLE_NAME)
-        if self.exportable is None:
-            self.exportable = "1"
-
-        self.merge_objects = self.cryexport_node.channel(CHANNEL_MERGE_OBJECTS_NAME)
-        if self.merge_objects is None:
-            self.merge_objects = "0"
+        self.neat_name = self.cryexport_node.name.replace(_c.CRYEXPORTNODE_PREFIX, "")
+        self.file_type = (
+            "1"
+            if self.cryexport_node.channel(_c.CHANNEL_FILETYPE_NAME) is None
+            else self.cryexport_node.channel(_c.CHANNEL_FILETYPE_NAME).get()
+        )
+        self.exportable = (
+            "1"
+            if self.cryexport_node.channel(_c.CHANNEL_EXPORTABLE_NAME) is None
+            else self.cryexport_node.channel(_c.CHANNEL_EXPORTABLE_NAME).get()
+        )
+        self.merge_objects = (
+            "0"
+            if self.cryexport_node.channel(_c.CHANNEL_MERGE_OBJECTS_NAME) is None
+            else self.cryexport_node.channel(_c.CHANNEL_MERGE_OBJECTS_NAME).get()
+        )
 
         self.groups = utils.get_groups_from_cryexport_node(self.cryexport_node)
 
@@ -154,7 +150,7 @@ class CryDAEBuilder:
         return utils.vtos(self.wpos_matrix.position)
 
     def get_root_rotation(self, axis):
-        return utils.vtos(self.wpos_matrix.asRotateMatrix()[AXIS_MAPPING[axis]])
+        return utils.vtos(self.wpos_matrix.asRotateMatrix()[_c.AXIS_MAPPING[axis]])
 
     def get_root_scale(self):
         return utils.vtos(self.wpos_matrix.scale())
@@ -192,10 +188,17 @@ class CryDAEBuilder:
     #
     # ####################################################################################
 
+    def create_geometry(self):
+        """
+
+        :return: list lxml.etree._Element all the geometry items for all the groups
+        """
+        return []
+
     def create_udp_extra(self, group):
         udp = group.channel("udp")
         udp = udp.get() if udp is not None else None
-        if udp is not None:
+        if udp is not None and udp != "":
             return E.extra(E.technique({"profile": "CryEngine"}, E.properties(udp)))
 
     def create_instance_geometry(self, group):

@@ -1,6 +1,9 @@
 # CryModo Tools
 > CRYENGINE exporter and tools for modo 13^ (Might work on other versions)
 
+## Installation
+* Drag and drop into your modo `Content/Kits` folder restart modo
+
 ## Export
 * Select CryExportNode(s) and click Export Selected or the hotkey `Ctrl-Alt-Shift-E`
 
